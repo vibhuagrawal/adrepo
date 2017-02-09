@@ -1,9 +1,8 @@
-package abc;
+package com.cim.web;
 
 import static org.junit.Assert.assertEquals;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
@@ -11,15 +10,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import com.cim.beans.Advertisment;
-
-import Com.Vibhu.Web.Campaigns.Resources.AdvertismentResource;
 
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -68,6 +64,24 @@ public class AdvertismentTest extends JerseyTest {
 	@Test
 	public void CreateMultipileActiveAdsforSamePartner()
 	{
+		
+		Advertisment ad = this.PopulateAdObject("PartnerX", 10, "First Active ad for PartnerX");
+		
+		Response response = target("/ad")
+				.request()
+				.post(Entity.entity(ad, MediaType.APPLICATION_JSON));
+		
+		assertEquals("First Active ad for PartnerX should have been created"
+				, Status.CREATED.getStatusCode(),response.getStatus());
+		
+		Advertisment ad2 = this.PopulateAdObject("PartnerX", 20, "Second Active ad for PartnerX");
+		
+		Response response2 = target("/ad")
+				.request()
+				.post(Entity.entity(ad2, MediaType.APPLICATION_JSON));
+		
+		assertEquals("First Active ad for PartnerX should have been created"
+				, Status.NOT_ACCEPTABLE.getStatusCode(),response2.getStatus());
 		
 	}
 	

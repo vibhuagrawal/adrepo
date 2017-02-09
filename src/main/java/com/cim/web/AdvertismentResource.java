@@ -30,7 +30,9 @@ public class AdvertismentResource {
 	@GET
 	public List<Advertisment> getAllAds()
 	{
+		System.out.println("hi");
 		return adservice.getAllAds();
+		
 	}
 	
 	@GET

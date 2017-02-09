@@ -1,12 +1,9 @@
 package com.cim.dao;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.cim.beans.Advertisment;
-
-import Com.Vibhu.Web.Campaigns.Service.*;
 
 public class DatabaseClass {
 
