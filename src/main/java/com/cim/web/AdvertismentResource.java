@@ -30,16 +30,18 @@ public class AdvertismentResource {
 	@GET
 	public List<Advertisment> getAllAds()
 	{
-		System.out.println("hi");
 		return adservice.getAllAds();
 		
 	}
 	
 	@GET
 	@Path("/{partner_id}")
-	public Advertisment getAd(@PathParam("partner_id") String partner_id)
+	public Response getAd(@PathParam("partner_id") String partner_id)
 	{
-		return adservice.getAd(partner_id);
+		 Advertisment newAd =  adservice.getAd(partner_id);
+		 return Response.status(Status.OK)
+					.entity(newAd)
+					.build();
 	}
 	
 	@POST

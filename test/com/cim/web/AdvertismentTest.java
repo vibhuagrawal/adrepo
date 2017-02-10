@@ -1,6 +1,7 @@
 package com.cim.web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -57,8 +58,19 @@ public class AdvertismentTest extends JerseyTest {
 	@Test
 	public void GetAd()
 	{
-		final Advertisment ad =  target("/ad/1").request().get(Advertisment.class);
-		assertEquals("Should return PartnerID 1 ","1", ad.getPartner_id());
+		
+		Advertisment ad = this.PopulateAdObject("Partner2", 10, "First Active ad for Partner2");
+		
+		Response response = target("/ad")
+				.request()
+				.post(Entity.entity(ad, MediaType.APPLICATION_JSON));
+		
+		assertEquals("First Active ad for Partner2 should have been created"
+				, Status.CREATED.getStatusCode(),response.getStatus());
+		
+				
+		final Advertisment ad2 =  target("/ad/Partner2").request().get(Advertisment.class);
+		assertEquals("Should return PartnerID Partner2 ","Partner2", ad2.getPartner_id());
 	}
 	
 	@Test
@@ -80,10 +92,73 @@ public class AdvertismentTest extends JerseyTest {
 				.request()
 				.post(Entity.entity(ad2, MediaType.APPLICATION_JSON));
 		
-		assertEquals("First Active ad for PartnerX should have been created"
+		assertEquals("Second Active ad for PartnerX should have not been created"
 				, Status.NOT_ACCEPTABLE.getStatusCode(),response2.getStatus());
 		
 	}
 	
+
+	@Test
+	public void CreateMultipileAdsforSamePartner()
+	{
+		
+		Advertisment ad = this.PopulateAdObject("PartnerY", 1, "First Active ad for PartnerY");
+		
+		Response response = target("/ad")
+				.request()
+				.post(Entity.entity(ad, MediaType.APPLICATION_JSON));
+		
+		assertEquals("First Active ad for PartnerY should have been created"
+				, Status.CREATED.getStatusCode(),response.getStatus());
+		
+		try {
+			// sleep for 2 second so that first ad expire
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Advertisment ad2 = this.PopulateAdObject("PartnerY", 2, "Second Active ad for PartnerY");
+		
+		Response response2 = target("/ad")
+				.request()
+				.post(Entity.entity(ad2, MediaType.APPLICATION_JSON));
+		
+		assertEquals("Second ad for PartnerY should have been created as first one would have been expired"
+				, Status.CREATED.getStatusCode(),response2.getStatus());
+		
+	}
+	
+	
+	@Test
+	public void FetchExpiredAd()
+	{
+		
+		Advertisment ad = this.PopulateAdObject("PartnerZ", 1, "First Active ad for PartnerZ");
+		
+		Response response = target("/ad")
+				.request()
+				.post(Entity.entity(ad, MediaType.APPLICATION_JSON));
+		
+		assertEquals("First Active ad for PartnerY should have been created"
+				, Status.CREATED.getStatusCode(),response.getStatus());
+		
+		try {
+			// sleep for 2 second so that first ad expire
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		Response rs =  target("/ad/PartnerZ").request().get();
+		
+		assertNotEquals("Should not get any valid active ad"
+				, Status.OK.getStatusCode(),rs.getStatus());
+		
+	
+	}
+
 
 }
