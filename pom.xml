@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>Com.Vibhu.Web</groupId>
+    <groupId>com.cim.web</groupId>
     <artifactId>Campaigns</artifactId>
     <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
@@ -22,9 +22,9 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+         
         </plugins>
     </build>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
